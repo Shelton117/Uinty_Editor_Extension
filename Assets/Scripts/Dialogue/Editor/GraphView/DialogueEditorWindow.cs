@@ -3,21 +3,20 @@ using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Shel.graph_view
+namespace Shel.Dialogue
 {
-    public class ViewWindow : EditorWindow
+    public class DialogueEditorWindow : EditorWindow
     {
-        EditorView _view;
+        DialogueEditorView _view;
 
-        public ViewWindow()
+        public DialogueEditorWindow()
         {
-            
             
         }
 
         private void OnEnable()
         {
-            _view = new EditorView { name = "EditorView" };
+            _view = new DialogueEditorView { name = "EditorView" };
             _view.StretchToParentSize();
             rootVisualElement.Add(_view);
 
@@ -34,10 +33,10 @@ namespace Shel.graph_view
             
         }
 
-        //[MenuItem("Tools/Graph_View")]
+        [MenuItem("Tools/Dialogue Editor")]
         static void Open()
         {
-            var win = GetWindow<ViewWindow>();
+            var win = GetWindow<DialogueEditorWindow>();
             win.titleContent = new GUIContent("Graph View");
         }
 

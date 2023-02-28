@@ -209,6 +209,9 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
+    - Name: action
+      Entry: 6
+      Data: 
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0

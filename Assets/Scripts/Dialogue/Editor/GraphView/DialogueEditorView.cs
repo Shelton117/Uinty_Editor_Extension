@@ -4,15 +4,15 @@ using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Shel.graph_view
+namespace Shel.Dialogue
 {
-    public class EditorView : GraphView
+    public class DialogueEditorView : GraphView
     {
         Rect currentRect;
         float interval = 20f;
         float width, height;
 
-        public EditorView() 
+        public DialogueEditorView() 
         {
             // viewTransformChanged += ViewTransformChangedCallBack;
             // graphViewChanged += GraphViewChangedCallBack;
@@ -24,7 +24,7 @@ namespace Shel.graph_view
             // Undo.undoRedoPerformed += Reload;
         }
 
-        ~EditorView()
+        ~DialogueEditorView()
         {
             // Undo.undoRedoPerformed -= Reload;
         }
@@ -35,8 +35,9 @@ namespace Shel.graph_view
         /// <param name="evt"></param>
         public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
         {
-            base.BuildContextualMenu(evt);
-            evt.menu.AppendAction("Add Dialogue Node", AddDialogueNode);
+            // 如果有选中节点就显示基础的右键菜单
+            // base.BuildContextualMenu(evt);
+            evt.menu.AppendAction("Text/Dialogue Node", AddDialogueNode);
         }
 
         public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter adapter)
@@ -149,11 +150,12 @@ namespace Shel.graph_view
 
         #region node
 
-        private EditorNode GenEntryPointNode()
+        private DialogueEditorNode GenEntryPointNode()
         {
-            EditorNode node = new EditorNode
+            DialogueEditorNode node = new DialogueEditorNode
             {
                 title = "START",
+
                 GUID = Guid.NewGuid().ToString(),
                 Text = "ENTRYPOINT",
                 Entry = true
@@ -177,7 +179,7 @@ namespace Shel.graph_view
         public void AddDialogueNode(string nodeName)
         {
             // 1. 创建Node
-            EditorNode node = new EditorNode
+            DialogueEditorNode node = new DialogueEditorNode
             {
                 title = nodeName,
                 GUID = Guid.NewGuid().ToString(),
@@ -222,15 +224,19 @@ namespace Shel.graph_view
             AddElement(node);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
         public void AddDialogueNode(DropdownMenuAction obj)
         {
+            var n = obj.name.Split("/");
             // 1. 创建Node
-            EditorNode node = new EditorNode
-            {
-                title = "Node",
-                GUID = Guid.NewGuid().ToString(),
-                Text = "Node",
-                Entry = false
+            DialogueEditorNode node = new DialogueEditorNode { 
+                title = n[1], 
+                GUID = Guid.NewGuid().ToString(), 
+                Text = "Node", 
+                Entry = false 
             };
 
             // 2. 为其创建InputPort
@@ -264,14 +270,15 @@ namespace Shel.graph_view
             node.titleContainer.Add(btn);
 
             // TODO:获取鼠标点击位置
-            var rect = new Rect(currentRect.x + interval + currentRect.width, currentRect.y, 100, 150);
+            var pos = obj.eventInfo.mousePosition;
+            var rect = new Rect(pos.x, pos.y, 100, 150);
             currentRect = rect;
             node.SetPosition(rect);
 
             AddElement(node);
         }
 
-        private void AddOutputPort(EditorNode node)
+        private void AddOutputPort(DialogueEditorNode node)
         {
             var outPort = GenPortForNode(node, Direction.Output);
 
